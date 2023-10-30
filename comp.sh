@@ -1,0 +1,3 @@
+make
+./poker
+make clean
