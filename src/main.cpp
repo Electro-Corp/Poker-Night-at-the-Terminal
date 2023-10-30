@@ -11,6 +11,7 @@ int main(){
     // Add it
     screen.AddWindow(&choicesWindow);
 
+
     while(1){
         screen.Display();
     }

@@ -8,9 +8,10 @@
 namespace Graphics{
     class Window{
         private:
-            int x, y, width, height;
             std::string title;
         public:
+            int x, y, width, height;
+
             Window(std::string title, int x, int y, int width, int height);
     };
 } 
