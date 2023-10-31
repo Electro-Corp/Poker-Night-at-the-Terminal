@@ -24,10 +24,10 @@ void Graphics::Screen::Refresh(){
         system("clear");
         Display();
     }
+    
 }
 
 void Graphics::Screen::Display(){
-    
     // Render Screen titlebar
     printAt((width / 2) - (title.length() / 2) - 1, 0, title.c_str());
 
@@ -41,6 +41,17 @@ void Graphics::Screen::Display(){
 
         for(auto& t : windows[i]->texts){
             printAt(t->x + windows[i]->x, t->y + windows[i]->y, t->text.c_str(), TEXT_BG);
+        }
+
+        for(auto& b : windows[i]->buttons){
+            int w = b->width;
+            if(b->text.length() > w) w = b->text.length();
+            for(int y = b->y; y < b->height; y++){
+                for(int x = b->x; x < w; x++){
+                    printAt(x + windows[i]->x, y + windows[i]->y, " ", BUTTON_BG);
+                }
+            }
+            printAt(b->x + windows[i]->x, b->y + windows[i]->y, b->text.c_str(), TEXT_BG);
         }
     }
 }
@@ -69,6 +80,11 @@ void Graphics::Screen::printAt(int x, int y, const char* text, enum RenderColor 
             b = 120;
             g = 120;
             break;
+
+        case BUTTON_BG:
+            r = 80;
+            b = 80;
+            g = 80;
     }
     printf("\033[48;2;%d;%d;%dm %s  \033[48;2;0;0;0m", r, g, b, text);
     fflush(stdout);

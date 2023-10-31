@@ -13,3 +13,7 @@ Graphics::Window::Window(std::string title, int x, int y, int width, int height)
 void Graphics::Window::AddText(Text* t){
     this->texts.push_back(t);
 }
+
+void Graphics::Window::AddButton(Button* b){
+    this->buttons.push_back(b);
+}

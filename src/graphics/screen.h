@@ -17,7 +17,8 @@ namespace Graphics{
 
     enum RenderColor{
         DEFAULT_GRAY = 0,
-        TEXT_BG = 1
+        TEXT_BG = 1,
+        BUTTON_BG = 2
     };
 
     class Screen{
