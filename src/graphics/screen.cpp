@@ -3,12 +3,7 @@
 //
 
 Graphics::Screen::Screen(std::string title){
-    // Get window size
-    struct winsize size;
-    ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
-
-    this->width = size.ws_col;
-    this->height = size.ws_row;
+    updateDim();
 
     // Copy title
     this->title = title;
@@ -23,7 +18,16 @@ void Graphics::Screen::AddWindow(Window* window){
     this->windows.push_back(window);
 }
 
+void Graphics::Screen::Refresh(){
+    if(updateDim() != 1){
+        // Clear screen
+        system("clear");
+        Display();
+    }
+}
+
 void Graphics::Screen::Display(){
+    
     // Render Screen titlebar
     printAt((width / 2) - (title.length() / 2) - 1, 0, title.c_str());
 
@@ -34,9 +38,12 @@ void Graphics::Screen::Display(){
                 printAt(x, y, " ");
             }
         }
+
+        for(auto& t : windows[i]->texts){
+            printAt(t->x + windows[i]->x, t->y + windows[i]->y, t->text.c_str(), TEXT_BG);
+        }
     }
 }
-
 
 
 /*
@@ -47,9 +54,37 @@ void printChar(int x, int y, char c){
     printf("\033[48;2;%d;%d;%dm %c  \033[48;2;0;0;0m", 100, 100, 100, c);
 }
 
-void Graphics::Screen::printAt(int x, int y, const char* text){
+void Graphics::Screen::printAt(int x, int y, const char* text, enum RenderColor c){
     printf("\033[%d;%dH",y , x);
-    printf("\033[48;2;%d;%d;%dm %s  \033[48;2;0;0;0m", 100, 100, 100, text);
+    int r = 0, g = 0, b = 0;
+    switch(c){
+        case DEFAULT_GRAY:
+            r = 100;
+            b = 100;
+            g = 100;
+            break;
+
+        case TEXT_BG:
+            r = 130;
+            b = 120;
+            g = 120;
+            break;
+    }
+    printf("\033[48;2;%d;%d;%dm %s  \033[48;2;0;0;0m", r, g, b, text);
     fflush(stdout);
 }
 
+
+
+int Graphics::Screen::updateDim(){
+     // Get window size
+    struct winsize size;
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
+
+    int oldW = width, oldY = height;
+
+    this->width = size.ws_col;
+    this->height = size.ws_row;
+
+    return oldW == width && height == oldY;
+}

@@ -14,6 +14,12 @@
 
 
 namespace Graphics{
+
+    enum RenderColor{
+        DEFAULT_GRAY = 0,
+        TEXT_BG = 1
+    };
+
     class Screen{
         private:
             int width, height;
@@ -24,13 +30,18 @@ namespace Graphics{
 
 
             // Display funcs
-            void printAt(int x, int y, const char* text);
+            void printAt(int x, int y, const char* text, enum RenderColor c = DEFAULT_GRAY);
+            
+            // Intenral
+            int updateDim();
         public:
             Screen(std::string title);
 
             void AddWindow(Window* window);
 
             void Display();
+            void Refresh();
+
 
             
     };

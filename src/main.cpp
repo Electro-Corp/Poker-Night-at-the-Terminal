@@ -7,13 +7,17 @@ int main(){
 
     // Create basic window
     Graphics::Window choicesWindow("Choices:", 10, 10, 80, 20);
+    Graphics::Text choiceText("Choices:", 2, 2);
+
+    choicesWindow.AddText(&choiceText);
 
     // Add it
     screen.AddWindow(&choicesWindow);
 
 
+    screen.Display();
     while(1){
-        screen.Display();
+        screen.Refresh();
     }
     
     return 0;
