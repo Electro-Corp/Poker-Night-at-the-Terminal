@@ -10,6 +10,7 @@
 #include <vector>
 #include <cstring>
 
+
 #include "window.h"
 
 
@@ -18,7 +19,8 @@ namespace Graphics{
     enum RenderColor{
         DEFAULT_GRAY = 0,
         TEXT_BG = 1,
-        BUTTON_BG = 2
+        BUTTON_BG_NORMAL = 2,
+        BUTTON_BG_SELECTED = 3
     };
 
     class Screen{

@@ -3,7 +3,7 @@ SOURCE	= src/main.cpp
 HEADER	= 
 OUT	= poker
 CC	 = g++
-FLAGS	 = -g -c -Wall
+FLAGS	 = -g -c -Wall -fpermissive -O0
 LFLAGS	 = -lpthread -lm -lncurses
 
 GRAPHICSDIR = src/graphics

@@ -9,3 +9,8 @@ Graphics::Button::Button(std::string text, int x, int y, int width, int height){
     this->width = width;
     this->height = height;
 }
+
+
+void Graphics::Button::updateSelect(){
+    this->isSelected = !this->isSelected;
+}

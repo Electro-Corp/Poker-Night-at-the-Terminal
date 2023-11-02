@@ -9,7 +9,10 @@ namespace Graphics{
         public:
             std::string text;
             int x, y, width, height;
+            bool isSelected = false;
             Button(std::string text, int x, int y, int width, int height);
+
+            void updateSelect();
     };
 }
 #include "button.cpp"
