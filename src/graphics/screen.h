@@ -20,12 +20,14 @@ namespace Graphics{
         DEFAULT_GRAY = 0,
         TEXT_BG = 1,
         BUTTON_BG_NORMAL = 2,
-        BUTTON_BG_SELECTED = 3
+        BUTTON_BG_SELECTED = 3,
+        CURRENT_WIN = 4
     };
 
     class Screen{
         private:
             int width, height;
+            int currentContext = 0;
             // Container for all windows
             std::vector<Window*> windows;
             // Title
@@ -37,6 +39,7 @@ namespace Graphics{
             
             // Intenral
             int updateDim();
+            void closeMostRecent();
         public:
             Screen(std::string title);
 
@@ -44,6 +47,10 @@ namespace Graphics{
 
             void Display();
             void Refresh();
+
+            bool HandleInput(char c);
+
+            void DialogBox(std::string title, std::string message);
 
 
             

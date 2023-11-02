@@ -26,6 +26,14 @@ void Graphics::Window::AddImage(Image* i){
 }
 
 bool Graphics::Window::InputButtons(char c){
+    if(c == '\n'){
+        if(this->buttons[currentButton]->onClick)
+        this->buttons[currentButton]->onClick();
+        else // Assume to be quit
+        this->CloseWindow();
+
+        return true;
+    }
     if(c == 27){
         if (read(STDIN_FILENO, &c, 1) == 1 && read(STDIN_FILENO, &c, 1) == 1) {
             switch (c) {
@@ -44,12 +52,19 @@ bool Graphics::Window::InputButtons(char c){
 }
 
 void Graphics::Window::UpdateSelection(int u){
-    this->buttons[currentButton]->isSelected = false;
-    int nextInd = currentButton;
-    if(u == 1) nextInd++;
-    else nextInd--;
-    if(nextInd > buttons.size() - 1)nextInd = 0;
-    if(nextInd < 0)nextInd = buttons.size() -1;
-    this->buttons[nextInd]->isSelected = true;
-    currentButton = nextInd;
+    if(buttons.size() > 1){
+        this->buttons[currentButton]->isSelected = false;
+        int nextInd = currentButton;
+        if(u == 1) nextInd++;
+        else nextInd--;
+        if(nextInd > buttons.size() - 1)nextInd = 0;
+        if(nextInd < 0)nextInd = buttons.size() -1;
+        this->buttons[nextInd]->isSelected = true;
+        currentButton = nextInd;
+    }
+}
+
+
+void Graphics::Window::CloseWindow(){
+    delete(this);
 }

@@ -3,8 +3,22 @@
 #include "graphics/screen.h"
 #include "input/inputmanager.h"
 
+Graphics::Screen *screen;
+
 void updateInput(Graphics::Screen screen, Graphics::Window choicesWindow, Input::InputManager* inputMan){
     if(choicesWindow.InputButtons(inputMan->InputTick())) screen.Display();
+}
+
+void D_call(){
+    screen->DialogBox("WOW", "CALL?");
+}
+
+void D_fold(){
+
+}
+
+void D_raise(){
+
 }
 
 int main(){
@@ -12,19 +26,19 @@ int main(){
     Input::InputManager* inputMan = new Input::InputManager();
 
     // Create screen
-    Graphics::Screen screen("Poker Night at the Terminal");
+    screen = new Graphics::Screen("Poker Night at the Terminal");
 
 
     // Create choice window
     Graphics::Window choicesWindow("Choices:", 10, 10, 40, 10);
     Graphics::Text choiceText("Choices:", 2, 2);
-    Graphics::Button fold("FOLD", 5, 5, 6, 2);
-    Graphics::Button call("CALL", 17, 5, 6, 2);
-    Graphics::Button raise("RAISE", 27, 5, 6, 2);
+    Graphics::Button fold("FOLD", 5, 5, 6, 2, D_fold);
+    Graphics::Button call("CALL", 17, 5, 6, 2, D_call);
+    Graphics::Button raise("RAISE", 27, 5, 6, 2, D_raise);
 
     // Create table
-    Graphics::Window tableWindow("View", 60, 5, 110, 30);
     Graphics::Image tableImage("assets/images/damn30.ppm", 0, 0);
+    Graphics::Window tableWindow("View", 60, 5, tableImage.width, tableImage.height);
     tableWindow.AddImage(&tableImage);
     
 
@@ -34,18 +48,22 @@ int main(){
     choicesWindow.AddButton(&raise); 
 
     // Add it
-    screen.AddWindow(&choicesWindow);
-    screen.AddWindow(&tableWindow);
+    screen->AddWindow(&tableWindow);
+    screen->AddWindow(&choicesWindow);
+    
 
 
-    screen.Display();
+    screen->Display();
 
 
     while(1){
-        std::thread goof(updateInput, screen, choicesWindow, inputMan);
-        screen.Refresh();
-        usleep(1000);
-        goof.join();
+        screen->Refresh();
+        if(screen->HandleInput(inputMan->InputTick())) screen->Display();
+        //std::thread goof(updateInput, screen, choicesWindow, inputMan);
+        //screen.Refresh();
+        //std::thread refr(&Graphics::Screen::Refresh, screen);
+        //goof.join();
+        //refr.join();
     }
     
     return 0;

@@ -15,17 +15,31 @@ Graphics::Screen::Screen(std::string title){
 }   
 
 void Graphics::Screen::AddWindow(Window* window){
+    window->index = windows.size();
+    currentContext = window->index;
     this->windows.push_back(window);
 }
 
+int prev = 0;
 void Graphics::Screen::Refresh(){
+    // Check if a window got removed
+    if(prev != windows.size()){
+        // Somethings got to be off, check
+        for(int i = 0; i < windows.size(); i++){
+            if(windows[i] == nullptr){
+                windows.erase(std::next(windows.begin(), i));
+                break;
+            }
+        }
+        prev = windows.size();
+        currentContext = prev - 1;
+    }
     // Check if the window changed
     if(updateDim() != 1){
         // Clear screen
         system("clear");
         Display();
     }
-    
 }
 
 void Graphics::Screen::Display(){
@@ -38,7 +52,10 @@ void Graphics::Screen::Display(){
         // Render windows   
         for(int y = windows[i]->y; y < windows[i]->height + windows[i]->y; y++){
             for(int x = windows[i]->x; x < windows[i]->width + windows[i]->x; x++){
-                printAt(x, y, " ");
+                if(i == currentContext)
+                    printAt(x, y, " ", CURRENT_WIN);
+                else
+                    printAt(x, y, " ");
             }
         }   
 
@@ -64,10 +81,10 @@ void Graphics::Screen::Display(){
             int wow = image->width;
             if(wow > windows[i]->width) wow = windows[i]->width;
             int y = image->y + windows[i]->y, x = image->x + windows[i]->x;
-            for (int j = 0, c = 0; j < image->colorData.size() *2; j++) {
+            for (int j = 0, c = 0; j < image->colorData.size() * 2; j++) {
                 printf("\033[%d;%dH",y, x++);
                 printf("\033[48;2;%d;%d;%dm ", image->colorData[c].r, image->colorData[c].g, image->colorData[c].b);
-                if (j % 1 == 0)
+                if (j % 2 == 0)
                     c++;
                 if (j % wow == 0){
                     y++;
@@ -80,9 +97,36 @@ void Graphics::Screen::Display(){
 }
 
 
+
+void Graphics::Screen::DialogBox(std::string title, std::string message){
+    Window* winTmp = new Window(title, width / 2, height / 2, 20 + message.length(), 5);
+    Text* tmp = new Text(message, winTmp->width / 2, winTmp->height / 2);
+    Button* ok = new Button(std::string{"OK"}, tmp->x, tmp->y + 2, 3, 1, NULL);  
+    winTmp->AddText(tmp);
+    winTmp->AddButton(ok);
+    this->AddWindow(winTmp);
+    this->Display();
+}
+
+
+bool Graphics::Screen::HandleInput(char c){
+    if(c == '\t'){
+        int tmp = currentContext + 1;
+        if(tmp > windows.size() - 1) tmp = 0;
+        currentContext = tmp;
+        return true;
+    }
+    return (windows[currentContext])->InputButtons(c);
+}
+
+
 /*
     Internal funcs
 */
+void Graphics::Screen::closeMostRecent(){
+    windows[currentContext]->CloseWindow();
+    currentContext--;
+}
 // Print a char at a position
 void printChar(int x, int y, char c){
     printf("\033[%d;%dH",y , x);
@@ -98,6 +142,12 @@ void Graphics::Screen::printAt(int x, int y, const char* text, enum RenderColor 
             r = 100;
             b = 100;
             g = 100;
+            break;
+        
+        case CURRENT_WIN:
+            r = 120;
+            b = 80;
+            g = 120;
             break;
 
         case TEXT_BG:

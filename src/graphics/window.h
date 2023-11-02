@@ -13,6 +13,7 @@ namespace Graphics{
         public:
             // Position and size data
             int x, y, width, height;
+            int index;
             // Title of window
             std::string title;
             // vecotrs
@@ -30,6 +31,8 @@ namespace Graphics{
             bool InputButtons(char c);
             
             void UpdateSelection(int);
+
+            void CloseWindow();
 
 
     };
