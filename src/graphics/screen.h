@@ -9,7 +9,7 @@
 #include <unistd.h>
 #include <vector>
 #include <cstring>
-
+#include <time.h>
 
 #include "window.h"
 
@@ -33,6 +33,9 @@ namespace Graphics{
             // Title
             std::string title;
 
+            time_t seconds;
+
+
 
             // Display funcs
             void printAt(int x, int y, const char* text, enum RenderColor c = DEFAULT_GRAY);
@@ -44,6 +47,8 @@ namespace Graphics{
             Screen(std::string title);
 
             void AddWindow(Window* window);
+
+            void CreateTimedWindow(std::string person, std::string text, std::string path, int time);
 
             void Display();
             void Refresh();

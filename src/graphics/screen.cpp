@@ -16,23 +16,25 @@ Graphics::Screen::Screen(std::string title){
 
 void Graphics::Screen::AddWindow(Window* window){
     window->index = windows.size();
-    currentContext = window->index;
+    if(!window->isTimed) // Make sure its not a timed window
+        currentContext = window->index; // Newest added window is current one
     this->windows.push_back(window);
 }
 
 int prev = 0;
 void Graphics::Screen::Refresh(){
+    // Somethings got to be off, check
+    for(int i = 0; i < windows.size(); i++){
+        if(!windows[i]->exist){
+            windows.erase(std::next(windows.begin(), i));
+            break;
+        }
+    }
     // Check if a window got removed
     if(prev != windows.size()){
-        // Somethings got to be off, check
-        for(int i = 0; i < windows.size(); i++){
-            if(windows[i] == nullptr){
-                windows.erase(std::next(windows.begin(), i));
-                break;
-            }
-        }
         prev = windows.size();
-        currentContext = prev - 1;
+        if(!windows[prev -1]->isTimed)
+            currentContext = prev - 1;
     }
     // Check if the window changed
     if(updateDim() != 1){
@@ -49,47 +51,56 @@ void Graphics::Screen::Display(){
     printAt((width / 2) - (title.length() / 2) - 1, 0, title.c_str());
 
     for(int i = 0; i < windows.size(); i++){
-        // Render windows   
-        for(int y = windows[i]->y; y < windows[i]->height + windows[i]->y; y++){
-            for(int x = windows[i]->x; x < windows[i]->width + windows[i]->x; x++){
-                if(i == currentContext)
-                    printAt(x, y, " ", CURRENT_WIN);
-                else
-                    printAt(x, y, " ");
+        if(windows[i]->isTimed){
+            if(time(NULL) - windows[i]->start > windows[i]->time){
+                windows[i]->CloseWindow();
             }
-        }   
-
-        for(Text* t: windows[i]->texts){
-            printAt(t->x + windows[i]->x, t->y + windows[i]->y, t->text.c_str(), TEXT_BG);
         }
-
-        for(Button* b : windows[i]->buttons){
-            int w = b->width;
-            if(b->text.length() > w) w = b->text.length();
-            for(int y = b->y; y < b->height + b->y; y++){
-                for(int x = b->x; x < w + b->x; x++){
-                    if(!b->isSelected)
-                    printAt(x + windows[i]->x, y + windows[i]->y, " ", BUTTON_BG_NORMAL);
+        if(windows[i]->exist){
+            // Render windows   
+            for(int y = windows[i]->y; y < windows[i]->height + windows[i]->y; y++){
+                for(int x = windows[i]->x; x < windows[i]->width + windows[i]->x; x++){
+                    if(i == currentContext)
+                        printAt(x, y, " ", CURRENT_WIN);
                     else
-                    printAt(x + windows[i]->x, y + windows[i]->y, " ", BUTTON_BG_SELECTED);
+                        printAt(x, y, " ");
                 }
-            }
-            printAt(b->x + windows[i]->x + (b->width / 2) - 1, b->y + windows[i]->y + (b->height / 2), b->text.c_str(), TEXT_BG);
-        }
+            }   
 
-        for(Image* image : windows[i]->images){
-            int wow = image->width;
-            if(wow > windows[i]->width) wow = windows[i]->width;
-            int y = image->y + windows[i]->y, x = image->x + windows[i]->x;
-            for (int j = 0, c = 0; j < image->colorData.size() * 2; j++) {
-                printf("\033[%d;%dH",y, x++);
-                printf("\033[48;2;%d;%d;%dm ", image->colorData[c].r, image->colorData[c].g, image->colorData[c].b);
-                if (j % 2 == 0)
-                    c++;
-                if (j % wow == 0){
-                    y++;
-                    if(y > windows[i]->height + 1)break;
-                    x = image->x + windows[i]->x;
+            for(Text* t: windows[i]->texts){
+                printAt(t->x + windows[i]->x, t->y + windows[i]->y, t->text.c_str(), TEXT_BG);
+            }
+
+            for(Button* b : windows[i]->buttons){
+                int w = b->width;
+                if(b->text.length() > w) w = b->text.length();
+                for(int y = b->y; y < b->height + b->y; y++){
+                    for(int x = b->x; x < w + b->x; x++){
+                        if(!b->isSelected)
+                        printAt(x + windows[i]->x, y + windows[i]->y, " ", BUTTON_BG_NORMAL);
+                        else
+                        printAt(x + windows[i]->x, y + windows[i]->y, " ", BUTTON_BG_SELECTED);
+                    }
+                }
+                printAt(b->x + windows[i]->x + (b->width / 2) - 1, b->y + windows[i]->y + (b->height / 2), b->text.c_str(), TEXT_BG);
+            }
+
+            for(Image* image : windows[i]->images){
+                int wow = image->width;
+                if(wow > windows[i]->width) wow = windows[i]->width;
+                if(wow == 0)
+                    wow = image->width;
+                int y = image->y + windows[i]->y, x = image->x + windows[i]->x;
+                for (int j = 0, c = 0; j < image->colorData.size() * 2; j++) {
+                    printf("\033[%d;%dH",y, x++);
+                    printf("\033[48;2;%d;%d;%dm ", image->colorData[c].r, image->colorData[c].g, image->colorData[c].b);
+                    if (j % 2 == 0)
+                        c++;
+                    if (j % wow == 0){
+                        y++;
+                        if(y > windows[i]->height + 1)break;
+                        x = image->x + windows[i]->x;
+                    }
                 }
             }
         }
@@ -109,11 +120,28 @@ void Graphics::Screen::DialogBox(std::string title, std::string message){
 }
 
 
+/*
+    Create window with a timer to destruction
+*/
+void Graphics::Screen::CreateTimedWindow(std::string person, std::string text, std::string path, int t){
+    Window* tmp = new Window(person, text, width / 2, height / 2, 110, 110, t);
+    seconds = time(NULL);
+    tmp->start = seconds;
+    Image* tpmImg = new Image(path, 0, 0);
+    tmp->AddImage(tpmImg);
+    this->AddWindow(tmp);
+}
+
 bool Graphics::Screen::HandleInput(char c){
     if(c == '\t'){
         int tmp = currentContext + 1;
         if(tmp > windows.size() - 1) tmp = 0;
         currentContext = tmp;
+        while(!windows[currentContext]->isTimed){
+            int tmp = currentContext + 1;
+            if(tmp > windows.size() - 1) tmp = 0;
+            currentContext = tmp;
+        }
         return true;
     }
     return (windows[currentContext])->InputButtons(c);

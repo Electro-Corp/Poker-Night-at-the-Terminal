@@ -14,6 +14,8 @@ namespace Graphics{
             // Position and size data
             int x, y, width, height;
             int index;
+            bool exist = true, isTimed = false;
+            int time, elap, start;
             // Title of window
             std::string title;
             // vecotrs
@@ -23,6 +25,7 @@ namespace Graphics{
             int currentButton = 0;
 
             Window(std::string title, int x, int y, int width, int height);
+            Window(std::string person, std::string caption, int x, int y, int width, int height, int seconds);
 
             void AddText(Text* t);
             void AddButton(Button* b);

@@ -6,7 +6,7 @@ namespace Poker{
     class PokerEngine{
         private:
         public:
-        
+            PokerEngine();
     };
 }
 #endif

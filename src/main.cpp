@@ -2,11 +2,26 @@
 #include <thread>
 #include "graphics/screen.h"
 #include "input/inputmanager.h"
+#include "poker/player.h"
 
 Graphics::Screen *screen;
+Poker::Player *Tycho;
 
 void updateInput(Graphics::Screen screen, Graphics::Window choicesWindow, Input::InputManager* inputMan){
     if(choicesWindow.InputButtons(inputMan->InputTick())) screen.Display();
+}
+
+void T_Update(){
+    Poker::PLAYER_TICK_ACTION TychoAction = Tycho->Tick();
+    if(TychoAction.isTalking){
+        // He wants to say something (lamo)
+        screen->CreateTimedWindow(
+            "Tycho Brahe",
+            TychoAction.caption,
+            "assets/images/TYCHO/TYCHO_DICE_C.ppm",
+            TychoAction.seconds
+        );
+    }
 }
 
 void D_call(){
@@ -22,6 +37,9 @@ void D_raise(){
 }
 
 int main(){
+    // Create Players
+    Tycho = new Poker::Player("Tycho Brahe", false);
+
     // Create inputMan
     Input::InputManager* inputMan = new Input::InputManager();
 
@@ -57,8 +75,12 @@ int main(){
 
 
     while(1){
+        std::thread TychoWork(T_Update);
         screen->Refresh();
         if(screen->HandleInput(inputMan->InputTick())) screen->Display();
+
+        
+        TychoWork.join();
         //std::thread goof(updateInput, screen, choicesWindow, inputMan);
         //screen.Refresh();
         //std::thread refr(&Graphics::Screen::Refresh, screen);

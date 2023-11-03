@@ -12,6 +12,17 @@ Graphics::Window::Window(std::string title, int x, int y, int width, int height)
     this->height = height;
 }
 
+Graphics::Window::Window(std::string person, std::string caption, int x, int y, int width, int height, int seconds){
+    this->title = person;
+    this->x = x;
+    this->y = y;
+    Text* personText = new Text(std::string{person + ": " + caption}, 0, height - 2);
+    this->AddText(personText);
+    this->isTimed = true;
+    this->time = seconds;
+}
+
+
 void Graphics::Window::AddText(Text* t){
     this->texts.push_back(t);
 }
@@ -66,5 +77,5 @@ void Graphics::Window::UpdateSelection(int u){
 
 
 void Graphics::Window::CloseWindow(){
-    delete(this);
+    this->exist = false;
 }
