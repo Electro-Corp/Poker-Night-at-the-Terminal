@@ -6,26 +6,46 @@
 
 Graphics::Screen *screen;
 Poker::Player *Tycho;
+Poker::Player *Heavy;
 
-void updateInput(Graphics::Screen screen, Graphics::Window choicesWindow, Input::InputManager* inputMan){
-    if(choicesWindow.InputButtons(inputMan->InputTick())) screen.Display();
+// Players
+std::vector<Poker::Player> players;
+
+void updateInput(Graphics::Window choicesWindow, Input::InputManager* inputMan){
+    while(1)
+        if(choicesWindow.InputButtons(inputMan->InputTick())) screen->Display();
 }
 
 void T_Update(){
-    Poker::PLAYER_TICK_ACTION TychoAction = Tycho->Tick();
-    if(TychoAction.isTalking){
-        // He wants to say something (lamo)
-        screen->CreateTimedWindow(
-            "Tycho Brahe",
-            TychoAction.caption,
-            "assets/images/TYCHO/TYCHO_DICE_C.ppm",
-            TychoAction.seconds
-        );
+    while(1){
+        // What Tycho feels like doing/saying (mostly saying) this turn
+        Poker::PLAYER_TICK_ACTION TychoAction = Tycho->Tick();
+        if(TychoAction.isTalking){
+            // He wants to say something (lamo)
+            screen->CreateTimedWindow(
+                Tycho->name,
+                TychoAction.caption,
+                "assets/images/TYCHO/TYCHO_DICE_C.ppm",
+                TychoAction.seconds
+            );
+        }
     }
 }
 
+
+
 void D_call(){
-    screen->DialogBox("WOW", "CALL?");
+    //screen->DialogBox("CALL", "CALL?");
+    Poker::PLAYER_TICK_ACTION TychoAction = Tycho->PlayerCalled();
+    if(TychoAction.isTalking){
+            // He wants to say something (lamo)
+            screen->CreateTimedWindow(
+                Tycho->name,
+                TychoAction.caption,
+                "assets/images/TYCHO/TYCHO_DICE_C.ppm",
+                TychoAction.seconds
+            );
+    }
 }
 
 void D_fold(){
@@ -38,7 +58,9 @@ void D_raise(){
 
 int main(){
     // Create Players
-    Tycho = new Poker::Player("Tycho Brahe", false);
+    Tycho = new Poker::Player("Tycho Brahe", false, "assets/dialog/Tycho.json");
+    //Heavy = new Poker::Player("The Heavy", false);
+    
 
     // Create inputMan
     Input::InputManager* inputMan = new Input::InputManager();
@@ -73,19 +95,12 @@ int main(){
 
     screen->Display();
 
-
+    std::thread TychoWork(T_Update);
+    TychoWork.detach();
+    std::thread goof(updateInput, choicesWindow, inputMan);
+    goof.detach();
     while(1){
-        std::thread TychoWork(T_Update);
         screen->Refresh();
-        if(screen->HandleInput(inputMan->InputTick())) screen->Display();
-
-        
-        TychoWork.join();
-        //std::thread goof(updateInput, screen, choicesWindow, inputMan);
-        //screen.Refresh();
-        //std::thread refr(&Graphics::Screen::Refresh, screen);
-        //goof.join();
-        //refr.join();
     }
     
     return 0;

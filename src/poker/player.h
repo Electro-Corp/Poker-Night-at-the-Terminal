@@ -4,6 +4,7 @@
 #define POKERPLAYER_H
 #include <iostream>
 #include <random>
+#include "../character/character.h"
 namespace Poker{
     typedef struct {
         bool isTalking; // Is the Character talking
@@ -18,7 +19,11 @@ namespace Poker{
             std::string name;
             bool isHuman = false, de = false;
 
-            Player(std::string name, bool isHuman);
+            Character::Character* thisChar;
+
+            Player(std::string name, bool isHuman, std::string fPath = NULL);
+
+
 
             // See if this mf has anything to say
             PLAYER_TICK_ACTION Tick();
@@ -27,6 +32,10 @@ namespace Poker{
             void Fold();
             void Call();
             void Raise();
+
+            // The player did something
+            PLAYER_TICK_ACTION PlayerCalled();
+
     };
 }
 #include "player.cpp"

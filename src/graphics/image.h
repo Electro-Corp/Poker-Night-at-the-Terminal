@@ -14,10 +14,14 @@ namespace Graphics{
         private:
         
         public:
+            // Raw RGB data
             std::vector<Color> colorData;
 
+            // Image path
             std::string imagePath;
+            // Position and Size data
             int x, y, width, height;
+            // Construrtert (speelinge)
             Image(std::string, int , int);
 
     };

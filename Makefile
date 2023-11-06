@@ -4,7 +4,7 @@ HEADER	=
 OUT	= poker
 CC	 = g++
 FLAGS	 = -g -c -Wall -fpermissive -O0
-LFLAGS	 = -lpthread -lm -lncurses
+LFLAGS	 = -lpthread -lm -lncurses -ljsoncpp
 
 GRAPHICSDIR = src/graphics
 

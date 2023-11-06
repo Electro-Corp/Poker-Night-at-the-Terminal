@@ -1,0 +1,27 @@
+{
+    "COMMENT": "Dialog JSON for Tycho Brahe's actions and responses",
+    "Checking" : {
+        "Player_Checks" : [
+            "Checking is lame. Unless you are Czech. Which I would find amusing.",
+            "Easy there, don't wanna hurt yourself.",
+            "(sarcastically) Check? Wow, what a move."
+        ],
+
+        "This_Checks" : [
+            "Check City, U.S.A.",
+            "Chkdsk.",
+            "I'll check."
+        ]
+    },
+
+    "Calling" : {
+        "Player_Calls" : [
+            "The gauntlet hath been thrown the fuck down.",
+            "..."
+        ],
+        
+        "This_Calls" : [
+            "Calling"
+        ]
+    }
+}

@@ -1,5 +1,5 @@
 #include "screen.h"
-
+#include <algorithm>
 //
 
 Graphics::Screen::Screen(std::string title){
@@ -33,14 +33,24 @@ void Graphics::Screen::Refresh(){
     // Check if a window got removed
     if(prev != windows.size()){
         prev = windows.size();
-        if(!windows[prev -1]->isTimed)
+        if(!(windows[prev -1]->isTimed))
             currentContext = prev - 1;
+        this->Display();
     }
     // Check if the window changed
     if(updateDim() != 1){
         // Clear screen
         system("clear");
         Display();
+    }
+
+    for(int i = 0; i < windows.size(); i++){
+        if(windows[i]->isTimed){
+            if(time(NULL) - windows[i]->start > windows[i]->time){
+                windows[i]->CloseWindow();
+                windows.erase(windows.begin()+i);
+            }
+        }
     }
 }
 
@@ -88,14 +98,13 @@ void Graphics::Screen::Display(){
             for(Image* image : windows[i]->images){
                 int wow = image->width;
                 if(wow > windows[i]->width) wow = windows[i]->width;
-                if(wow == 0)
-                    wow = image->width;
                 int y = image->y + windows[i]->y, x = image->x + windows[i]->x;
                 for (int j = 0, c = 0; j < image->colorData.size() * 2; j++) {
                     printf("\033[%d;%dH",y, x++);
                     printf("\033[48;2;%d;%d;%dm ", image->colorData[c].r, image->colorData[c].g, image->colorData[c].b);
-                    if (j % 2 == 0)
+                    if (j % 2 == 0){
                         c++;
+                    }
                     if (j % wow == 0){
                         y++;
                         if(y > windows[i]->height + 1)break;
@@ -124,10 +133,11 @@ void Graphics::Screen::DialogBox(std::string title, std::string message){
     Create window with a timer to destruction
 */
 void Graphics::Screen::CreateTimedWindow(std::string person, std::string text, std::string path, int t){
-    Window* tmp = new Window(person, text, width / 2, height / 2, 110, 110, t);
+    Image* tpmImg = new Image(path, 0, 0);
+    Window* tmp = new Window(person, text, width / 2, height / 4, std::max(tpmImg->width, (int)(person.length() + text.length())), tpmImg->height + 1, t);
     seconds = time(NULL);
     tmp->start = seconds;
-    Image* tpmImg = new Image(path, 0, 0);
+    
     tmp->AddImage(tpmImg);
     this->AddWindow(tmp);
 }
@@ -137,11 +147,6 @@ bool Graphics::Screen::HandleInput(char c){
         int tmp = currentContext + 1;
         if(tmp > windows.size() - 1) tmp = 0;
         currentContext = tmp;
-        while(!windows[currentContext]->isTimed){
-            int tmp = currentContext + 1;
-            if(tmp > windows.size() - 1) tmp = 0;
-            currentContext = tmp;
-        }
         return true;
     }
     return (windows[currentContext])->InputButtons(c);

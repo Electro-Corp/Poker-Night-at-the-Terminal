@@ -2,9 +2,15 @@
 */
 #include "player.h"
 
-Poker::Player::Player(std::string name, bool isHuman){
+Poker::Player::Player(std::string name, bool isHuman, std::string fPath = NULL){
     this->name = name;
     this->isHuman = isHuman;
+
+    if(!isHuman){
+        this->thisChar = new Character::Character(
+            fPath
+        );
+    }
 }
 
 Poker::PLAYER_TICK_ACTION Poker::Player::Tick(){
@@ -19,7 +25,10 @@ Poker::PLAYER_TICK_ACTION Poker::Player::Tick(){
         de = true;
         // We would like to say something
         tmp.isTalking = true;
-        tmp.caption = "It's important for you to know up front that I've got your ass kicked preemptively.";
+        if(this->thisChar)
+            tmp.caption = this->thisChar->Checking.getRandom();
+        else
+            tmp.caption = "What the fuck am I supposed to say?";
         tmp.seconds = 3;
     }
     return tmp;
@@ -35,4 +44,18 @@ void Poker::Player::Fold(){
 
 void Poker::Player::Raise(){
 
+}
+
+
+
+/*
+    The player did something
+*/
+Poker::PLAYER_TICK_ACTION Poker::Player::PlayerCalled(){
+    PLAYER_TICK_ACTION tmp = {
+        true,
+        this->thisChar->Player_Calls.getRandom(),
+        1
+    };
+    return tmp;
 }
