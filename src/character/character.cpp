@@ -4,7 +4,7 @@
 
 #include "../utils/JsonReader.h"
 
-Character::Character::Character(std::string fPath){
+Character::Character::Character(std::string fPath, std::string imagePath){
     // Load shit
     JsonReader cR(fPath.c_str());
 
@@ -32,5 +32,11 @@ Character::Character::Character(std::string fPath){
         this->Player_Calls.dataText.push_back(
             pCallString.asString()
         );
+    }
+
+    // Load images
+    for (const auto & entry : fs::directory_iterator(imagePath)){
+        Graphics::Image* tmp = new Graphics::Image(entry.path().u8string(), 0, 0);
+        this->images.push_back(tmp);
     }
 }

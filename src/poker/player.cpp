@@ -2,15 +2,13 @@
 */
 #include "player.h"
 
-Poker::Player::Player(std::string name, bool isHuman, std::string fPath = NULL){
+Poker::Player::Player(std::string name, std::string fPath, std::string iPath){
     this->name = name;
-    this->isHuman = isHuman;
 
-    if(!isHuman){
-        this->thisChar = new Character::Character(
-            fPath
-        );
-    }
+    this->thisChar = new Character::Character(
+        fPath,
+        iPath
+    );
 }
 
 Poker::PLAYER_TICK_ACTION Poker::Player::Tick(){

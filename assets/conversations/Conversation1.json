@@ -1,0 +1,27 @@
+{
+    "CONVO_1" : {
+        "Tycho_1" : "So, what do you do for fun, Heavy?",
+        "Heavy_1" : "Clean Sasha...",
+        "Heavy_2" : "Use Sasha...",
+        "Heavy_3" : "Clean Sasha again...",
+        "Tycho_2" : "Proper maintenance is crucial.",
+        "Heavy_4" : "I also collect old coins.",
+        "Tycho_3" : "A fellow numismatist!",
+        "Heavy_5" : "..Which I melt down to make custom bullets.",
+        "Tycho_4" : "Of course you do."
+    },
+
+    "CONVO_2" : {
+        "Tycho_1" : "Hey Max, how do you like being a freelance police officer?",
+        "Max_1" : "It's the best.",
+        "Tycho_2" : "I bet it is",
+        "Max_2" : "Oh, but that's not all I do." ,
+        "Max_3": "I'm also available for babysitting, bat mitzvahs and general shakedowns.",
+        "Max_4": "You know anybody who needs work?",
+        "Tycho_3" : "See, this why I think we get along. You're a Renaissance man.",
+        "Max_5" : "You need anybody roughed up?",
+        "Tycho_4": "There's a bird at the pet store that's been giving me a little beak, yeah.",
+        "Max_6": "Oh ho, putting a wise acre in his place is my specialty!"
+    }
+
+}

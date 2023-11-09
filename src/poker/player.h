@@ -17,11 +17,11 @@ namespace Poker{
             std::random_device dev;
         public:
             std::string name;
-            bool isHuman = false, de = false;
+            bool de = false;
 
             Character::Character* thisChar;
 
-            Player(std::string name, bool isHuman, std::string fPath = NULL);
+            Player(std::string name, std::string fPath, std::string);
 
 
 

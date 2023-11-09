@@ -3,8 +3,10 @@
 #include "graphics/screen.h"
 #include "input/inputmanager.h"
 #include "poker/player.h"
+#include "character/convoman.h"
 
 Graphics::Screen *screen;
+Character::ConversationManager* convoMan;
 Poker::Player *Tycho;
 Poker::Player *Heavy;
 
@@ -14,6 +16,11 @@ std::vector<Poker::Player> players;
 void updateInput(Graphics::Window choicesWindow, Input::InputManager* inputMan){
     while(1)
         if(choicesWindow.InputButtons(inputMan->InputTick())) screen->Display();
+}
+
+void Convo_Update(){
+    while(1)
+        convoMan->ConversationTick(screen);
 }
 
 void T_Update(){
@@ -58,9 +65,12 @@ void D_raise(){
 
 int main(){
     // Create Players
-    Tycho = new Poker::Player("Tycho Brahe", false, "assets/dialog/Tycho.json");
-    //Heavy = new Poker::Player("The Heavy", false);
+    Tycho = new Poker::Player("Tycho", "assets/dialog/Tycho.json", "assets/images/TYCHO");
     
+    Heavy = new Poker::Player("Heavy", "assets/dialog/Heavy.json", "assets/images/HEAVY");
+    
+    // Create convoMan
+    convoMan = new Character::ConversationManager("assets/conversations/");
 
     // Create inputMan
     Input::InputManager* inputMan = new Input::InputManager();
@@ -99,6 +109,8 @@ int main(){
     TychoWork.detach();
     std::thread goof(updateInput, choicesWindow, inputMan);
     goof.detach();
+    std::thread ConvoWork(Convo_Update);
+    ConvoWork.detach();
     while(1){
         screen->Refresh();
     }
