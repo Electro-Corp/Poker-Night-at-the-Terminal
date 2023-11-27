@@ -1,0 +1,22 @@
+{
+    "COMMENT": "Dialog JSON for Max's actions and responses",
+    "Checking" : {
+        "Player_Checks" : [
+
+        ],
+
+        "This_Checks" : [
+
+        ]
+    },
+
+    "Calling" : {
+        "Player_Calls" : [
+
+        ],
+        
+        "This_Calls" : [
+            
+        ]
+    }
+}

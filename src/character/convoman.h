@@ -6,14 +6,24 @@
 #include <iostream>
 #include <filesystem>
 #include <vector>
+#include <random>
+#include <chrono>
+#include <thread>
 
 #include "../utils/JsonReader.h"
 #include "../poker/player.h"
 #include "../graphics/screen.h"
 
 namespace fs = std::filesystem;
-
+using namespace std::this_thread;
+using namespace std::chrono_literals; // ns, us, ms, s, h
+using std::chrono::system_clock;
+/*
+*/
 namespace Character{
+    /*
+        Stores a single dialog line
+    */
     class DialogLine{
         private:
         public:
@@ -21,6 +31,9 @@ namespace Character{
             DialogLine(std::string, Json::Value line);
     };
 
+    /*
+        Stores a conversation
+    */
     class Conversation{
         private:
             
@@ -35,11 +48,12 @@ namespace Character{
     */
     class ConversationManager{
         private:
+            std::random_device dev;
         public:
-            std::vector<Poker::Player> chars;
+            std::vector<Poker::Player*> chars;
             std::vector<Conversation> convos;
 
-            ConversationManager(std::string convoDir);
+            ConversationManager(std::string convoDir, std::vector<Poker::Player*> players);
             ConversationManager();
 
 

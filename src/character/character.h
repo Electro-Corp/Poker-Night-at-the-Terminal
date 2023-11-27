@@ -7,6 +7,7 @@
 #include <filesystem>
 #include <fstream>
 #include <vector>
+#include <random>
 #include <json/json.h>
 
 #include "diag_options.h"
@@ -17,7 +18,7 @@ namespace fs = std::filesystem;
 namespace Character{
     class Character{
         private:
-            
+            std::random_device dev;
         public:
             /*
                 Dialog
@@ -36,6 +37,7 @@ namespace Character{
 
             Character(std::string dataFilePath, std::string);
 
+            Graphics::Image* getRandomImage();
     };
 }
 #include "character.cpp"

@@ -9,9 +9,10 @@ Graphics::Screen *screen;
 Character::ConversationManager* convoMan;
 Poker::Player *Tycho;
 Poker::Player *Heavy;
+Poker::Player *Max;
 
 // Players
-std::vector<Poker::Player> players;
+std::vector<Poker::Player*> players;
 
 void updateInput(Graphics::Window choicesWindow, Input::InputManager* inputMan){
     while(1)
@@ -26,8 +27,8 @@ void Convo_Update(){
 void T_Update(){
     while(1){
         // What Tycho feels like doing/saying (mostly saying) this turn
-        Poker::PLAYER_TICK_ACTION TychoAction = Tycho->Tick();
-        if(TychoAction.isTalking){
+        //Poker::PLAYER_TICK_ACTION TychoAction = Tycho->Tick();
+        /*if(TychoAction.isTalking){
             // He wants to say something (lamo)
             screen->CreateTimedWindow(
                 Tycho->name,
@@ -35,7 +36,7 @@ void T_Update(){
                 "assets/images/TYCHO/TYCHO_DICE_C.ppm",
                 TychoAction.seconds
             );
-        }
+        }*/
     }
 }
 
@@ -68,9 +69,15 @@ int main(){
     Tycho = new Poker::Player("Tycho", "assets/dialog/Tycho.json", "assets/images/TYCHO");
     
     Heavy = new Poker::Player("Heavy", "assets/dialog/Heavy.json", "assets/images/HEAVY");
+
+    Max = new Poker::Player("Max", "assets/dialog/Max.json", "assets/images/MAX");
     
+    players.push_back(Tycho);
+    players.push_back(Heavy);
+    players.push_back(Max);
+
     // Create convoMan
-    convoMan = new Character::ConversationManager("assets/conversations/");
+    convoMan = new Character::ConversationManager("assets/conversations/", players);
 
     // Create inputMan
     Input::InputManager* inputMan = new Input::InputManager();

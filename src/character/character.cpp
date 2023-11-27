@@ -36,7 +36,14 @@ Character::Character::Character(std::string fPath, std::string imagePath){
 
     // Load images
     for (const auto & entry : fs::directory_iterator(imagePath)){
+        printf("Loading image %s\n", (entry.path().u8string()).c_str());
         Graphics::Image* tmp = new Graphics::Image(entry.path().u8string(), 0, 0);
         this->images.push_back(tmp);
     }
+}
+
+Graphics::Image* Character::Character::getRandomImage(){
+    std::mt19937 rng(dev());
+    std::uniform_int_distribution<std::mt19937::result_type> tmp(0, images.size());
+    return images[tmp(rng)];
 }

@@ -21,7 +21,7 @@ namespace Poker{
 
             Character::Character* thisChar;
 
-            Player(std::string name, std::string fPath, std::string);
+            Player(std::string name, std::string fPath, std::string i);
 
 
 
